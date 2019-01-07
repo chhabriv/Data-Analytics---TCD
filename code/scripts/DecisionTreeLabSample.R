@@ -1,0 +1,23 @@
+library(readxl)
+Data <- read_excel("code/DataAnalytics/DT-Credit.xls")
+str(Data)
+attach(Data)
+library(rpart)
+library(rpart.plot)
+library(partykit)
+cols <- c(4:31)
+Data[cols] <- lapply(Data[cols], factor)
+DT_Model=rpart(RESPONSE~.,data=Data,control=rpart.control(minsplit = 60, minbucket = 30,maxdepth = 4))
+plot(as.party(DT_Model))
+Target=as.factor(ifelse(RESPONSE==1,'Y','N'))
+Data <- data.frame(Data,Target) 
+str(Data) 
+Data1=Data[-c(31)]
+DT_Model1<-rpart(Target~., data=Data1, control=rpart.control(minsplit=60, minbucket=30, maxdepth=4 )) 
+plot(as.party(DT_Model1)) 
+print(DT_Model1) 
+DT_Model2<-rpart(Target~., data=Data1, control=rpart.control(minsplit=60, minbucket=30, maxdepth=8)) 
+plot(as.party(DT_Model2)) 
+print(DT_Model2) 
+
+#pruning
